@@ -1,0 +1,889 @@
+node red installation
+
+npm install -g --unsafe-perm node-red
+
+
+
+task 1
+
+ Step-by-Step (Using PuTTY or Windows Terminal):
+🔹 Option 1: Using PuTTY
+Download and open PuTTY.
+
+Enter your Raspberry Pi's IP address.
+
+Click Open.
+
+Login with:
+
+Username: pi
+
+Password: raspberry (or whatever you set)
+
+🔹 Option 2: Using Windows Terminal or PowerShell (Windows 10/11)
+If you're using Windows Terminal or PowerShell, you can SSH directly:
+
+bash
+Copy
+Edit
+ssh pi@<raspberry_pi_ip>
+Example:
+
+bash
+Copy
+Edit
+ssh pi@192.168.1.100
+It will prompt for a password. Enter it and you'll be logged into the Pi remotely.
+
+✅ Once You're Logged into Raspberry Pi
+Now you're in the Raspberry Pi terminal, and you can safely run:
+
+bash
+Copy
+Edit
+bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+This will install Node-RED and Node.js on the Pi.
+
+Summary
+Action	Where to Run	Notes
+ssh pi@<ip>	Windows PowerShell / Terminal	To log into Raspberry Pi
+bash <(curl ...)	On Raspberry Pi (after SSH)	Installs Node-RED
+Let me know if you want help with any step — I can walk you through it in real-time!
+
+
+task2 
+
+
+
+create a simple node red flow that takes input from an inject node and displays output in a debug node.add a function node to modify the payload in the flow
+
+
+ChatGPT said:
+Here's how you can create a simple Node-RED flow that:
+
+Injects a message.
+
+Modifies the payload using a Function node.
+
+Displays the output using a Debug node.
+
+🔧 Steps to Create the Flow
+1. Open Node-RED:
+Go to http://localhost:1880
+
+2. Drag these nodes onto the canvas:
+inject
+
+function
+
+debug
+
+3. Wire them like this:
+css
+Copy
+Edit
+[inject] → [function] → [debug]
+🧠 Function Node Logic
+Double-click the Function node and paste this code:
+
+javascript
+Copy
+Edit
+msg.payload = "Hello, " + msg.payload + "!";
+return msg;
+This will prepend "Hello, " to the injected payload.
+
+⚙️ Configure Inject Node
+Double-click the Inject node:
+
+Set Payload to type: string
+
+Set the value to:
+
+
+Node-RED
+✅ Deploy and Test
+Click Deploy, then hit the Inject button (little square on the left).
+
+You should see the output in the Debug pane:
+
+
+Hello, Node-RED!
+
+
+task 3
+
+🚀 STEP-BY-STEP GUIDE
+🟢 Step 1: Open Node-RED
+Go to your browser
+
+Open: http://localhost:1880
+
+🟢 Step 2: Add MQTT Input Node
+On the left panel, drag the mqtt in node onto the flow canvas.
+
+Double-click the mqtt in node to configure it.
+
+🟢 Step 3: Configure MQTT Broker
+In the MQTT node, click the pencil icon next to the "Server" field.
+
+Enter the following:
+
+Name: Test Mosquitto (optional)
+
+Server: test.mosquitto.org
+
+Port: 1883
+
+Protocol Version: MQTT v3.1.1 or 4
+
+Leave everything else default.
+
+Click Add, then Done.
+
+🟢 Step 4: Set MQTT Topic
+In the MQTT In node:
+
+Topic: test/topic (or any topic name you want)
+
+QoS: Leave it as 0
+
+Click Done
+
+🟢 Step 5: Add a Debug Node
+Drag a debug node onto the canvas.
+
+Wire the mqtt in node to the debug node:
+
+css
+Copy
+Edit
+[mqtt in] → [debug]
+Double-click the debug node (optional), and make sure it is set to show:
+
+Output: msg.payload
+
+Click Done
+
+🟢 Step 6: Deploy the Flow
+Click the red Deploy button (top-right)
+
+Your flow is now subscribed to the topic!
+
+🟢 Step 7: Test the Flow – Publish to the Topic
+Option 1: Using Mosquitto Client (Command Line)
+If you have Mosquitto installed:
+
+bash
+Copy
+Edit
+mosquitto_pub -h test.mosquitto.org -t test/topic -m "Hello from terminal"
+Option 2: Use a Tool (e.g. MQTT Explorer or MQTT.fx)
+Connect to test.mosquitto.org:1883
+
+Publish to topic test/topic
+
+Message: Hello from MQTT tool
+
+🟢 Step 8: See the Output
+Open the Debug sidebar on the right in Node-RED
+
+You will see:
+
+csharp
+Copy
+Edit
+Hello from terminal
+🟢 Step 9 (Optional): Modify the Message Using a Function Node
+Drag a function node between the MQTT and Debug nodes.
+
+Double-click it and paste this code:
+
+javascript
+Copy
+Edit
+msg.payload = "MQTT says: " + msg.payload;
+return msg;
+Click Done
+
+Wire it like this:
+
+css
+Copy
+Edit
+[mqtt in] → [function] → [debug]
+Click Deploy
+
+Now you’ll see:
+
+csharp
+Copy
+Edit
+MQTT says: Hello from terminal
+✅ Done! You're now receiving MQTT messages in Node-RED!
+
+task 4
+implement an http request node to interact with an external api stepwise
+
+
+ChatGPT said:
+Perfect! Let's now integrate an HTTP Request node into your Node-RED flow to call an external API and view the response — step-by-step.
+
+🌐 GOAL:
+Use Node-RED to send an HTTP GET request to an external API (like a joke or weather API) and display the result using a Debug node.
+
+We'll use a free joke API:
+👉 https://official-joke-api.appspot.com/random_joke
+
+✅ STEP-BY-STEP GUIDE
+🟢 Step 1: Open Node-RED
+In your browser, go to:
+
+arduino
+Copy
+Edit
+http://localhost:1880
+🟢 Step 2: Drag Nodes onto the Flow
+From the left sidebar, drag in the following nodes:
+
+inject node
+
+http request node
+
+debug node
+
+🟢 Step 3: Configure the Inject Node
+Double-click the inject node.
+
+Set:
+
+Payload: empty
+
+Name: Get Joke (optional)
+
+Click Done
+
+🟢 Step 4: Configure the HTTP Request Node
+Double-click the http request node.
+
+Set:
+
+Method: GET
+
+URL:
+
+arduino
+Copy
+Edit
+https://official-joke-api.appspot.com/random_joke
+Click Done
+
+🟢 Step 5: Configure the Debug Node
+Double-click the debug node.
+
+Set it to output:
+
+msg.payload
+
+Click Done
+
+🟢 Step 6: Wire the Nodes
+Connect them like this:
+
+css
+Copy
+Edit
+[inject] → [http request] → [debug]
+🟢 Step 7: Deploy the Flow
+Click the red Deploy button (top right)
+
+🟢 Step 8: Trigger the Request
+Click the Inject button on the left of the inject node.
+
+Open the Debug panel on the right side.
+
+You should see a JSON response like:
+
+json
+Copy
+Edit
+{
+  "id": 123,
+  "type": "general",
+  "setup": "Why don't scientists trust atoms?",
+  "punchline": "Because they make up everything!"
+}
+✅ OPTIONAL: Extract Specific Parts (e.g., Just the Joke)
+If you want to format the joke nicely, insert a function node between http request and debug:
+
+Drag in a function node
+
+Paste this code:
+
+javascript
+Copy
+Edit
+msg.payload = msg.payload.setup + " — " + msg.payload.punchline;
+return msg;
+Wire it like:
+
+css
+Copy
+Edit
+[inject] → [http request] → [function] → [debug]
+Click Deploy again
+
+Now the Debug tab will show:
+
+vbnet
+Copy
+Edit
+Why don't scientists trust atoms? — Because they make up everything!
+Want to use a POST request, custom headers, or interact with authenticated APIs? Just say the word!
+
+task 5
+
+build a basic iot dashboard using the node red dashboard nodes
+
+
+ChatGPT said:
+Awesome! Let’s build a basic IoT Dashboard in Node-RED using dashboard nodes — step-by-step.
+
+We'll create a simple UI that:
+
+Displays sensor values (simulated with inject nodes)
+
+Shows a gauge and a chart
+
+Uses node-red-dashboard nodes like ui_gauge, ui_chart, and ui_text
+
+🛠️ Step-by-Step Guide: Create a Basic IoT Dashboard
+✅ Step 1: Install Node-RED Dashboard (if not installed)
+In the terminal (where Node-RED is running), run:
+
+bash
+Copy
+Edit
+npm install node-red-dashboard
+Then restart Node-RED.
+
+✅ Step 2: Open Node-RED
+Go to your browser and open:
+
+arduino
+Copy
+Edit
+http://localhost:1880
+✅ Step 3: Add Dashboard Nodes
+From the left sidebar, scroll to the dashboard section, and drag these nodes:
+
+inject
+
+function
+
+ui_gauge
+
+ui_chart
+
+ui_text
+
+✅ Step 4: Configure the UI Layout
+Double-click any dashboard node (like ui_gauge)
+
+Click the pencil icon next to “Group”
+
+Create a new Tab (e.g., "IoT Dashboard")
+
+Create a new Group (e.g., "Sensor Readings")
+
+Click Add and then Done
+
+✅ Step 5: Create Simulated Sensor Data
+🧪 Example Inject Node:
+Double-click the inject node
+
+Set:
+
+Payload type: number
+
+Value: {{random}} (or use static values like 25)
+
+Interval: every 5 seconds
+
+Name: Simulate Temp
+
+Click Done
+
+(Optional) Add a Function Node:
+To simulate dynamic values:
+
+javascript
+Copy
+Edit
+msg.payload = Math.floor(Math.random() * 50);
+return msg;
+✅ Step 6: Configure Dashboard Nodes
+🟡 ui_gauge Node:
+Label: Temperature
+
+Range: 0 to 50
+
+Units: °C
+
+Group: Sensor Readings
+
+🟠 ui_chart Node:
+Label: Temperature Chart
+
+X-Axis: default
+
+Group: Sensor Readings
+
+🔵 ui_text Node:
+Label: Current Temp
+
+Group: Sensor Readings
+
+✅ Step 7: Wire the Flow
+Example wiring:
+
+css
+Copy
+Edit
+[inject] → [function] → [ui_gauge]
+                        → [ui_chart]
+                        → [ui_text]
+✅ Step 8: Deploy
+Click the red Deploy button.
+
+✅ Step 9: View Your IoT Dashboard
+Open:
+
+bash
+Copy
+Edit
+http://localhost:1880/ui
+🎉 You'll see:
+
+A gauge showing temperature
+
+A chart plotting live data
+
+A text display showing current value
+
+task 6
+
+include widgets for displaying sensor data and control buttons
+
+
+ChatGPT said:
+Perfect! Let’s now build a complete IoT Dashboard in Node-RED that includes:
+
+✅ Features:
+Simulated sensor data (temperature, humidity)
+
+Display widgets: Gauge, Chart, Text
+
+Control buttons (e.g., Turn ON/OFF a device)
+
+🛠️ Step-by-Step: IoT Dashboard with Widgets & Control Buttons
+✅ Step 1: Prerequisites
+Make sure node-red-dashboard is installed:
+
+bash
+Copy
+Edit
+npm install node-red-dashboard
+Restart Node-RED and go to:
+
+arduino
+Copy
+Edit
+http://localhost:1880
+✅ Step 2: Nodes You'll Use
+Drag in these nodes from the sidebar:
+
+🧾 Data Simulation:
+inject (x2 — for temperature & humidity)
+
+function (x2 — simulate random values)
+
+📊 Display Widgets:
+ui_gauge (for temp & humidity)
+
+ui_chart (for plotting temperature)
+
+ui_text (current values)
+
+🔘 Control:
+ui_button (ON/OFF)
+
+function (to simulate device action)
+
+ui_text (device status)
+
+✅ Step 3: Set Up Dashboard Layout
+Double-click any dashboard node (e.g., ui_gauge)
+
+Click the pencil icon beside "Group"
+
+Create:
+
+Tab: IoT Dashboard
+
+Group 1: Sensor Data
+
+Group 2: Device Control
+
+Click Done
+
+✅ Step 4: Simulate Sensor Data
+🌡️ Temperature Function Node:
+javascript
+Copy
+Edit
+msg.payload = Math.floor(Math.random() * 50); // 0-49
+return msg;
+💧 Humidity Function Node:
+javascript
+Copy
+Edit
+msg.payload = Math.floor(30 + Math.random() * 50); // 30-80%
+return msg;
+Use inject nodes to trigger every 5 seconds → connect to these functions.
+
+✅ Step 5: Configure Display Widgets
+🌡️ ui_gauge for Temperature:
+Label: Temperature
+
+Range: 0–50 °C
+
+Group: Sensor Data
+
+💧 ui_gauge for Humidity:
+Label: Humidity
+
+Range: 30–100%
+
+Group: Sensor Data
+
+📈 ui_chart for Temperature Trend:
+Label: Temp Chart
+
+Group: Sensor Data
+
+📋 ui_text:
+Label: Current Temp & Current Humidity
+
+Group: Sensor Data
+
+✅ Step 6: Add Control Buttons
+🔘 ui_button: Turn ON
+Label: Turn ON
+
+Payload: ON
+
+Group: Device Control
+
+🔘 ui_button: Turn OFF
+Label: Turn OFF
+
+Payload: OFF
+
+Group: Device Control
+
+⚙️ Function Node:
+javascript
+Copy
+Edit
+msg.payload = "Device is " + msg.payload;
+return msg;
+🟩 ui_text: Device Status
+Label: Device Status
+
+Group: Device Control
+
+✅ Step 7: Wire Everything
+css
+Copy
+Edit
+[inject temp] → [function temp] → [ui_gauge]
+                                   → [ui_chart]
+                                   → [ui_text (temp)]
+
+[inject hum]  → [function hum]  → [ui_gauge]
+                                   → [ui_text (hum)]
+
+[ui_button ON] → [function] → [ui_text (status)]
+[ui_button OFF]→ [function] → [ui_text (status)]
+✅ Step 8: Deploy and Test
+Click the red Deploy button
+
+Visit your dashboard:
+
+bash
+Copy
+Edit
+http://localhost:1880/ui
+🎉 You’ll see:
+
+Live temperature/humidity values
+
+Gauges, chart, and live text
+
+ON/OFF buttons updating status
+
+task 7
+
+
+✅ Step-by-Step: Fix bcryptjs Error & Generate Password Hash
+🟢 Step 1: Go to your .node-red folder
+In Command Prompt:
+
+bash
+Copy
+Edit
+cd %HOMEPATH%\.node-red
+🟢 Step 2: Install bcryptjs
+Run:
+
+bash
+Copy
+Edit
+npm install bcryptjs
+This installs the required package in your local Node-RED folder.
+
+🟢 Step 3: Generate the Password Hash
+Once installed, run:
+
+bash
+Copy
+Edit
+node -e "console.log(require('bcryptjs').hashSync('your_password', 8))"
+🔁 Replace your_password with your desired password.
+
+Example:
+
+bash
+Copy
+Edit
+node -e "console.log(require('bcryptjs').hashSync('admin123', 8))"
+✅ Expected Output:
+You'll get something like this:
+
+perl
+Copy
+Edit
+$2a$08$G39zRQXGdGf8ydvUSZrjVeWyWnPZnnas33EFM3XyZkFRXhRjhM8K2
+✅ Copy that hash.
+
+🟢 Step 4: Add It to Your settings.js File
+Go to:
+
+makefile
+Copy
+Edit
+C:\Users\DELL\.node-red\settings.js
+Uncomment or add this block:
+
+js
+Copy
+Edit
+adminAuth: {
+    type: "credentials",
+    users: [{
+        username: "admin",
+        password: "$2a$08$G39zRQXGdGf8ydvUSZrjVeWyWnPZnnas33EFM3XyZkFRXhRjhM8K2", // Your hash here
+        permissions: "*"
+    }]
+},
+🟢 Step 5: Restart Node-RED
+In Command Prompt:
+
+bash
+Copy
+Edit
+node-red-stop
+node-red-start
+🟢 Step 6: Test in Browser
+Go to:
+
+arduino
+Copy
+Edit
+http://localhost:1880
+You should now see a login prompt! 🎉
+
+ task 8
+
+ Step-by-Step: Install and Use OpenSSL on Windows
+🟢 Step 1: Download OpenSSL for Windows
+Go to this official Windows build site:
+👉 https://slproweb.com/products/Win32OpenSSL.html
+
+Download:
+
+Win64 OpenSSL v3.x.x (Light) if you're on a 64-bit system (most likely)
+
+Or the full version if you prefer (includes docs and tools)
+
+Run the installer:
+
+Choose a path like: C:\OpenSSL-Win64
+
+Allow it to install the OpenSSL binaries
+
+Choose to install OpenSSL DLLs to the OpenSSL bin directory
+
+🟢 Step 2: Add OpenSSL to System PATH (Optional but Recommended)
+To run openssl from any terminal:
+
+Press Win + S → search for Environment Variables
+
+Click Edit the system environment variables
+
+Click Environment Variables
+
+Under System variables, find and select Path → click Edit
+
+Click New and add:
+
+makefile
+Copy
+Edit
+C:\OpenSSL-Win64\bin
+Click OK → OK → OK
+
+Then restart PowerShell or Command Prompt to apply the changes.
+
+🟢 Step 3: Verify OpenSSL is Installed
+Run:
+
+bash
+Copy
+Edit
+openssl version
+✅ You should see something like:
+
+yaml
+Copy
+Edit
+OpenSSL 3.0.13  19 Mar 2024
+🟢 Step 4: Generate the SSL Certificate
+Now create the cert and key (inside your Node-RED folder):
+
+bash
+Copy
+Edit
+cd %HOMEPATH%\.node-red
+mkdir certs
+cd certs
+Then run:
+
+bash
+Copy
+Edit
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privatekey.pem -out certificate.pem
+You’ll be prompted to enter:
+
+Country, State, Organization (you can leave these blank or fill them)
+
+Now continue with the TLS setup as mentioned earlier (editing settings.js).
+
+✅ Step-by-Step Guide to Enable HTTPS in Node-RED
+🟢 Step 1: Generate an SSL Certificate (Self-Signed)
+If you don't already have an SSL cert, generate one:
+
+Open Command Prompt or PowerShell:
+
+bash
+Copy
+Edit
+mkdir C:\Users\DELL\.node-red\certs
+cd C:\Users\DELL\.node-red\certs
+Then run this (in PowerShell or Git Bash):
+
+bash
+Copy
+Edit
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout privatekey.pem -out certificate.pem
+It will ask for info like country, state, etc. You can leave them blank or fill them.
+
+This creates:
+
+privatekey.pem – your private key
+
+certificate.pem – your public certificate
+
+🟢 Step 2: Edit settings.js to Use HTTPS
+Go to:
+
+makefile
+Copy
+Edit
+C:\Users\DELL\.node-red\settings.js
+Find and update the https section:
+
+js
+Copy
+Edit
+// Enable HTTPS
+https: {
+    key: require("fs").readFileSync("certs/privatekey.pem"),
+    cert: require("fs").readFileSync("certs/certificate.pem")
+},
+requireHttps: true, // Optional: force HTTPS (for redirect)
+✔️ Make sure the file paths are correct relative to .node-red.
+
+🟢 Step 3: Optional – Change Port
+If you want to use a standard HTTPS port like 443:
+
+js
+Copy
+Edit
+uiPort: 443,
+Or choose another port like 8443.
+
+⚠️ On Windows, using port 443 might require admin privileges.
+
+🟢 Step 4: Restart Node-RED
+In Command Prompt:
+
+bash
+Copy
+Edit
+node-red-stop
+node-red-start
+🟢 Step 5: Access Node-RED Over HTTPS
+Now open in your browser:
+
+arduino
+Copy
+Edit
+https://localhost:1880
+✅ You’ll get a “connection is not secure” warning — that’s expected for self-signed certs. Click Advanced → Proceed.
+
+🛡️ Optional: Use a Valid SSL Certificate (e.g., Let’s Encrypt)
+If you're hosting on a public server (not localhost), you can:
+
+Use Let's Encrypt for a free valid certificate
+
+Use nginx as a reverse proxy with SSL
+
+Let me know if you'd like help setting that up.
+
+🔚 You’re now running Node-RED securely via HTTPS!
+Would you like help:
+
+Setting this up with a domain name?
+
+Using NGINX as a secure reverse proxy?
+
+Deploying Node-RED on the cloud?
+
+Let me know how far you want to go with this!
+
+
+
+
+
